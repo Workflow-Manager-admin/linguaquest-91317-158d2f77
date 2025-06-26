@@ -54,7 +54,11 @@ function exportJSON(data, filename) {
 function App() {
   // Board/state: categories (with language scope), questions[rows][columns] => objects
   const [board, setBoard] = useState(() => loadInitialBoard());
-  const [revealed, setRevealed] = useState([]); // revealed[row][col] = true
+  const [revealed, setRevealed] = useState(() =>
+    Array(DEFAULT_BOARD.questions.length)
+      .fill()
+      .map(() => Array(DEFAULT_BOARD.categories.length).fill(false))
+  ); // revealed[row][col] = true
   const [modal, setModal] = useState(null); // {row, col}
   const [adminMode, setAdminMode] = useState(false);
   const [editMode, setEditMode] = useState(false); // Edit question cell directly
@@ -63,8 +67,20 @@ function App() {
   const uploadRef = useRef();
 
   useEffect(() => {
-    if (adminMode) setRevealed(Array(board.questions.length).fill().map(() => Array(board.categories.length).fill(false)));
-  }, [adminMode, board.categories.length, board.questions.length]);
+    // Always keep revealed shape in sync with board
+    setRevealed(
+      Array(board.questions.length)
+        .fill()
+        .map(
+          (_, i) =>
+            Array(board.categories.length)
+              .fill(false)
+              // preserve already revealed values if possible (so edit doesn't erase revealed state, unless required)
+              .map((_, j) => revealed?.[i]?.[j] ?? false)
+        )
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [board.categories.length, board.questions.length]);
 
   function loadInitialBoard() {
     // Optionally, load from localStorage
@@ -89,6 +105,10 @@ function App() {
     setModal({ row, col });
     // Mark as revealed
     const revealedCopy = revealed.slice();
+    // Defensive: ensure row array exists
+    if (!revealedCopy[row]) {
+      revealedCopy[row] = Array(board.categories.length).fill(false);
+    }
     revealedCopy[row][col] = true;
     setRevealed(revealedCopy);
   }

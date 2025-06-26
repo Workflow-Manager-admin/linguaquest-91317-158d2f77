@@ -1,1 +1,1 @@
-{"jeopardy_english_frontend": {"status": "running", "timestamp": "2025-06-26T15:37:30.721242", "url": "https://vscode-internal-48-beta.beta01.cloud.kavia.ai:3000/preview.html", "api_route": "", "self.db_env_vars": null, "error": null}}
+{"jeopardy_english_frontend": {"status": "building", "timestamp": "2025-06-26T15:53:06.128965", "url": "https://vscode-internal-48-beta.beta01.cloud.kavia.ai:3000/preview.html", "api_route": "", "self.db_env_vars": null, "error": null}}
